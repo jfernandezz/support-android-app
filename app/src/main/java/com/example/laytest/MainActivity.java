@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    // sendPost();
+                    // sendPost();///
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
