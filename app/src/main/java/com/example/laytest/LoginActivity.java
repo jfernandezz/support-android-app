@@ -1,5 +1,6 @@
 package com.example.laytest;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -24,60 +25,72 @@ import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import service.Login;
+import factory.LoginServiceFactory;
+import service.LoginService;
 
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private Button btnLogin;
     private EditText userText;
     private EditText passText;
     private ProgressBar loginProgressBar;
-    private static ExecutorService es= Executors.newSingleThreadExecutor();
+    private LoginService loginService = LoginServiceFactory.getLoginService();
+    private static ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private static Context appContext;
+
+    public static Context getAppContext() {
+        return appContext;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        appContext = getApplicationContext();
         setContentView(R.layout.login);
-        btnLogin = (Button) findViewById(R.id.btnLogin) ;
+        btnLogin = (Button) findViewById(R.id.btnLogin);
         userText = (EditText) findViewById(R.id.userText);
-        userText.setText("");
+        userText.setText("jfernandez");
         passText = (EditText) findViewById(R.id.passText);
-        passText.setText("");
-        loginProgressBar = (ProgressBar)findViewById(R.id.loginProgressBar);
+        passText.setText("Password.01");
+        loginProgressBar = (ProgressBar) findViewById(R.id.loginProgressBar);
         loginProgressBar.setVisibility(View.GONE);
-       if (android.os.Build.VERSION.SDK_INT > 9)
-        {
+        if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    // sendPost();///
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            loginProgressBar.setVisibility(View.VISIBLE);
-                             Runnable r = new Runnable() {
-                                @Override
-                                public void run() {
-                                    if( Login.login(userText.getText().toString(),passText.getText().toString())){
-                                        Intent ticketCreation = new Intent(getApplicationContext(), TicketCreationActivity.class);
-                                        startActivity(ticketCreation);
-                                        loginProgressBar.setVisibility(View.GONE);
-                                    }else{
-                                        loginProgressBar.setVisibility(View.GONE);
-                                    }
-                                }
-                            };
-                           es.submit(r);
-                        }
-                    });
-                }catch (Exception e){}
-            }
-        });
+        btnLogin.setOnClickListener(loginOnClickListener);
         mTextMessage = findViewById(R.id.message);
+    }
+
+    private View.OnClickListener loginOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            tryDoLogin();
+        }
+    };
+
+    private void tryDoLogin(){
+        loginProgressBar.setVisibility(View.VISIBLE);
+        Runnable runnableLogin = new Runnable() {
+            @Override
+            public void run() {
+                boolean loginSucceededFull = login();
+                if (loginSucceededFull) startTicketCreationActivity();
+                loginProgressBar.setVisibility(View.GONE);
+            }
+        };
+        executorService.submit(runnableLogin);
+    }
+
+    private boolean login() {
+        return loginService.login(userText.getText().toString(), passText.getText().toString());
+
+    }
+
+    private void startTicketCreationActivity() {
+        Intent ticketCreation = new Intent(getApplicationContext(), TicketCreationActivity.class);
+        startActivity(ticketCreation);
     }
 
 
@@ -86,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                try  {
+                try {
                     String url = "https://slack.com/api/chat.postMessage";
                     URL obj = new URL(url);
                     HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
@@ -95,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     con.setRequestMethod("POST");
                     //con.setRequestProperty("User-Agent", USER_AGENT);
                     //con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-                    con.setRequestProperty("Authorization","Bearer xoxp-445726298631-481370596708-717194665540-c8b1febcc2ab18b1daa1fc58e238d244");
+                    con.setRequestProperty("Authorization", "Bearer xoxp-445726298631-481370596708-717194665540-c8b1febcc2ab18b1daa1fc58e238d244");
                     con.setRequestProperty("Content-Type", "application/json; utf-8");
                     String jsonInputString = "{\"channel\": \"UE5AWHJLU\",\"text\": \"Android Support text terst\"}";
 
@@ -137,15 +150,13 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
 
 
-
     }
-
 
 
     private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
         StringBuilder feedback = new StringBuilder();
         boolean first = true;
-        for(Map.Entry<String, String> entry : params.entrySet()){
+        for (Map.Entry<String, String> entry : params.entrySet()) {
             if (first)
                 first = false;
             else
@@ -158,5 +169,6 @@ public class MainActivity extends AppCompatActivity {
 
         return feedback.toString();
     }
+
 
 }

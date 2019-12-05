@@ -1,4 +1,4 @@
-package Entity;
+package entity;
 
 public class Environment {
     public static String EnvironmentUsed = "PRODUCTION";
