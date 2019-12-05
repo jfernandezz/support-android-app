@@ -4,91 +4,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#95479C47"
+    android:background="@color/colorPrimary"
     android:gravity="top"
     android:orientation="vertical">
 
 
     <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"
-        android:layout_height="296dp">
+        android:layout_height="wrap_content"
+        app:tabIndicatorColor="@color/colorPrimaryDark"
+        app:tabIndicatorHeight="8dp">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:icon="@drawable/ic_home_black_24dp"
-            android:text="Monday" />
+            android:text="Production" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tuesday" />
+            android:text="Mobile" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Wednesday" />
+            android:text="Alpha" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Beta" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Testing" />
     </com.google.android.material.tabs.TabLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="569dp"
         android:orientation="vertical">
 
-        <RadioGroup
+        <Spinner
+            android:id="@+id/supportTicketActionSpinner"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#B0144E14"
-            android:orientation="horizontal"
-            tools:layout_height="50dp">
-
-            <RadioButton
-                android:id="@+id/prodRadioBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:checked="true"
-                android:text="PRODUCT..." />
-
-            <RadioButton
-                android:id="@+id/mobileRadioBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="MOBILE" />
-
-            <RadioButton
-                android:id="@+id/testRadioBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="TESTING" />
-
-            <RadioButton
-                android:id="@+id/alfaRadioBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="ALFA" />
-
-            <RadioButton
-                android:id="@+id/betaRadioBtn"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="BETA" />
-
-        </RadioGroup>
+            android:layout_height="38dp" />
 
         <AutoCompleteTextView
             android:id="@+id/autoCompleteTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:completionThreshold="2"
             android:hint="Select company..."
-            android:lines="1"
-            android:maxLength="100" />
-
-        <Spinner
-            android:id="@+id/ticketActionSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:inputType="text" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/supportTicketActionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:text="ACEPTAR" />
 
 
 </LinearLayout>
