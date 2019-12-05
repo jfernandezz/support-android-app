@@ -14,7 +14,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 public class HttpUrlConnectionMM{
-    public static String myCookie;
+    private static String myCookie;
 
     public static String main(String[] args) throws Exception {
         
