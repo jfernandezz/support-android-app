@@ -28,14 +28,18 @@ public class TicketCreationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ticket_creation);
-        SupportTicketMatchedCompaniesService.matchedCompanies= nodeService.getSuppotrTicketCompanies();
         autoTextView = (AppCompatAutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
-        CustomListAdapter adaptercc = new CustomListAdapter(TicketCreationActivity.this,  R.layout.company_name_items, SupportTicketMatchedCompaniesService.matchedCompanies);
-      //  autoTextView.setThreshold(2); //will start working from 2 character
-        autoTextView.setAdapter(adaptercc);
         ticketActionSpinner = (Spinner) findViewById(R.id.supportTicketActionSpinner);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        SupportTicketMatchedCompaniesService.matchedCompanies= nodeService.getSuppotrTicketCompanies();
+        CustomListAdapter adaptercc = new CustomListAdapter(TicketCreationActivity.this,  R.layout.company_name_items, SupportTicketMatchedCompaniesService.matchedCompanies);
+        autoTextView.setAdapter(adaptercc);
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this, R.layout.support_ticket_actions_items,R.id.supportTicketActionItem, fruits);
         ticketActionSpinner.setAdapter(adapter1);
     }
-
 }

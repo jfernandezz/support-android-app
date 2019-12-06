@@ -17,7 +17,6 @@ public class NodeCallImpl implements NodeCall{
    private Retrofit retrofit;
    public NodeCallImpl() {
        OkHttpClient.Builder okHttpClient = new OkHttpClient().newBuilder();
-
        okHttpClient.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {

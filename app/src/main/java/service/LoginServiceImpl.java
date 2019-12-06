@@ -35,9 +35,6 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Boolean login(String username, String password) {
-     /*   supportSession.setUser(username);
-        supportSession.setPassword(password);
-        return login2();*///esto andaaaaaaaaaaaaaaaaaaaaaaaa
       Response<String> response = callLoginSupportApi(username, password);
         if (responseIsNull(response)) return false;
         else {
@@ -62,7 +59,6 @@ public class LoginServiceImpl implements LoginService {
     }
 
     private String extractSessionId(Response<String> response) {
-        //return response.raw().priorResponse().header("Set-Cookie").toString().split(";")[0];
         return response.raw().priorResponse().headers().value(0).toString().split(";")[0];
     }
 

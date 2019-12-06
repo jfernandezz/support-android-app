@@ -1,6 +1,5 @@
 package com.example.laytest;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -18,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -25,7 +25,11 @@ import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import Entity.SupportEnvironmentContainer;
 import factory.LoginServiceFactory;
+import factory.SupportEnvironmentContainerFactory;
+import service.ApplicationPropertiesReader;
+import service.ApplicationPropertiesReaderImpl;
 import service.LoginService;
 
 
@@ -37,22 +41,17 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar loginProgressBar;
     private LoginService loginService = LoginServiceFactory.getLoginService();
     private static ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private static Context appContext;
-
-    public static Context getAppContext() {
-        return appContext;
-    }
+    private SupportEnvironmentContainer supportEnvironmentContainer = SupportEnvironmentContainerFactory.getSupportEnvironmentContainer()  ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        appContext = getApplicationContext();
         setContentView(R.layout.login);
+        loadSupportExpressEnvironment();
+
         btnLogin = (Button) findViewById(R.id.btnLogin);
         userText = (EditText) findViewById(R.id.userText);
-        userText.setText("jfernandez");
         passText = (EditText) findViewById(R.id.passText);
-        passText.setText("Password.01");
         loginProgressBar = (ProgressBar) findViewById(R.id.loginProgressBar);
         loginProgressBar.setVisibility(View.GONE);
         if (android.os.Build.VERSION.SDK_INT > 9) {
@@ -63,6 +62,54 @@ public class LoginActivity extends AppCompatActivity {
         mTextMessage = findViewById(R.id.message);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        btnLogin.setEnabled(true);
+        loginProgressBar.setVisibility(View.GONE);
+        userText.setText("jfernandez");
+        passText.setText("Password.01");
+        System.out.println("onStart: " + new Date());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("onResume: " + new Date());
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        System.out.println("onPause: " + new Date());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        System.out.println("onStop: " + new Date());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        System.out.println("onDestroy: " + new Date());
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        ;
+        System.out.println("onRestart: " + new Date());
+    }
+    private void loadSupportExpressEnvironment(){
+        ApplicationPropertiesReader  applicationPropertiesReader = new ApplicationPropertiesReaderImpl("app.properties");
+        applicationPropertiesReader.getProperty("productionIp",getApplicationContext());
+        System.out.println("PAUSE");
+        //supportEnvironmentContainer.se
+
+    }
     private View.OnClickListener loginOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -70,14 +117,14 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
-    private void tryDoLogin(){
+    private void tryDoLogin() {
+        btnLogin.setEnabled(false);
         loginProgressBar.setVisibility(View.VISIBLE);
         Runnable runnableLogin = new Runnable() {
             @Override
             public void run() {
                 boolean loginSucceededFull = login();
                 if (loginSucceededFull) startTicketCreationActivity();
-                loginProgressBar.setVisibility(View.GONE);
             }
         };
         executorService.submit(runnableLogin);
