@@ -1,15 +1,17 @@
-package Entity;
+package service;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SupportEnvironmentContainer {
+import Entity.SupportEnvironment;
+
+public class SupportEnvironmentContainerImpl implements SupportEnvironmentContainer {
 
     private ConcurrentHashMap<String, SupportEnvironment> supportEnvironmentMap;
 
-    public SupportEnvironmentContainer() {
+    public SupportEnvironmentContainerImpl() {
     }
 
-    public SupportEnvironmentContainer( ConcurrentHashMap<String, SupportEnvironment> supportEnvironmentMap) {
+    public SupportEnvironmentContainerImpl(ConcurrentHashMap<String, SupportEnvironment> supportEnvironmentMap) {
         this.supportEnvironmentMap = supportEnvironmentMap;
     }
 
@@ -19,5 +21,10 @@ public class SupportEnvironmentContainer {
 
     public void setSupportEnvironmentMap(ConcurrentHashMap<String, SupportEnvironment> supportEnvironmentMap) {
         this.supportEnvironmentMap = supportEnvironmentMap;
+    }
+
+    @Override
+    public SupportEnvironment getEnvironmentById(String environmentId) {
+        return supportEnvironmentMap.get(environmentId);
     }
 }

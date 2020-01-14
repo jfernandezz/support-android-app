@@ -2,14 +2,14 @@ package Entity;
 
 import retrofit2.Retrofit;
 
-public class CurrentRertofit {
-    private Retrofit currentRerofit;
+public class CurrentRetrofit {
+  private Retrofit currentRetrofit;
 
-    public Retrofit getCurrentRerofit() {
-        return currentRerofit;
+    public Retrofit getCurrentRetrofit() {
+        return currentRetrofit;
     }
 
-    public void setCurrentRerofit(Retrofit currentRerofit) {
-        this.currentRerofit = currentRerofit;
+    public void setCurrentRetrofit(Retrofit currentRetrofit) {
+        this.currentRetrofit = currentRetrofit;
     }
 }

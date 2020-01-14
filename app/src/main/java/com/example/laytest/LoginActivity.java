@@ -25,12 +25,10 @@ import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import Entity.SupportEnvironmentContainer;
 import factory.LoginServiceFactory;
-import factory.SupportEnvironmentContainerFactory;
-import service.ApplicationPropertiesReader;
-import service.ApplicationPropertiesReaderImpl;
+import factory.SupportEnvironmetManagerFactory;
 import service.LoginService;
+import service.SupportEnvironmetManager;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -39,16 +37,17 @@ public class LoginActivity extends AppCompatActivity {
     private EditText userText;
     private EditText passText;
     private ProgressBar loginProgressBar;
-    private LoginService loginService = LoginServiceFactory.getLoginService();
+    private LoginService loginService;
     private static ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private SupportEnvironmentContainer supportEnvironmentContainer = SupportEnvironmentContainerFactory.getSupportEnvironmentContainer()  ;
+   // private SupportEnvironmentContainerImpl supportEnvironmentContainer = SupportEnvironmentContainerFactory.getSupportEnvironmentContainer()  ;
 
+    private SupportEnvironmetManager supportEnvironmetManager = SupportEnvironmetManagerFactory.getSupportEnvironmetManager();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadSupportExpressEnvironments();
+        loginService = LoginServiceFactory.getLoginService();
         setContentView(R.layout.login);
-        loadSupportExpressEnvironment();
-
         btnLogin = (Button) findViewById(R.id.btnLogin);
         userText = (EditText) findViewById(R.id.userText);
         passText = (EditText) findViewById(R.id.passText);
@@ -103,9 +102,10 @@ public class LoginActivity extends AppCompatActivity {
         ;
         System.out.println("onRestart: " + new Date());
     }
-    private void loadSupportExpressEnvironment(){
-        ApplicationPropertiesReader  applicationPropertiesReader = new ApplicationPropertiesReaderImpl("app.properties");
-        applicationPropertiesReader.getProperty("productionIp",getApplicationContext());
+    private void loadSupportExpressEnvironments(){
+        supportEnvironmetManager.initialize("app.properties", getApplicationContext());
+
+
         System.out.println("PAUSE");
         //supportEnvironmentContainer.se
 

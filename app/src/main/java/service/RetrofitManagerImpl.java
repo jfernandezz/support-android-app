@@ -1,17 +1,24 @@
-package factory;
+package service;
 
 import java.io.IOException;
 
+import Entity.CurrentRetrofit;
+import factory.CurrentRetrofitFactory;
+import factory.CurrentSupportEnvironmentFactory;
+import factory.SessionFactory;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import service.CurrentSupportEnvironment;
 
-public class RetrofitManager {
-    private Retrofit globalRetrofit;
+public class RetrofitManagerImpl implements RetofitManager{
+    private CurrentRetrofit currentRetrofit = CurrentRetrofitFactory.getCurrentRetrofit();
+
+    public RetrofitManagerImpl() {
+        reBuildDefaultRetrofit();
+    }
 
     private CurrentSupportEnvironment currentSupportEnvironment = CurrentSupportEnvironmentFactory.getCurrentSupportEnvironment();
 
@@ -32,23 +39,17 @@ public class RetrofitManager {
 
 
     public Retrofit reBuildDefaultRetrofit() {
-        return globalRetrofit = reBuildRetrofit(supportCompaniesInterceptor);
+        return reBuildRetrofit(supportCompaniesInterceptor);
     }
 
     public Retrofit reBuildRetrofit(Interceptor interceptor) {
         OkHttpClient.Builder okHttpClient = new OkHttpClient().newBuilder().addInterceptor(interceptor);
-        globalRetrofit = new Retrofit.Builder().baseUrl(currentSupportEnvironment.getCurrentEnvironment().getUrlBase()).client(okHttpClient.build())
+        Retrofit newRetrofit = new Retrofit.Builder().baseUrl(currentSupportEnvironment.getCurrentEnvironment().getUrlBase()).client(okHttpClient.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        return globalRetrofit;
+        currentRetrofit.setCurrentRetrofit(newRetrofit);
+        return newRetrofit;
     }
 
 
-    public Retrofit getGlobalRetrofit() {
-        return globalRetrofit;
-    }
-
-    public void setGlobalRetrofit(Retrofit globalRetrofit) {
-        this.globalRetrofit = globalRetrofit;
-    }
 }

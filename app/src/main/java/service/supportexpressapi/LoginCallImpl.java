@@ -8,6 +8,7 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 
+import factory.CurrentSupportEnvironmentFactory;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -17,10 +18,13 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import service.CurrentSupportEnvironment;
 
 
 public class LoginCallImpl implements LoginCall {
     private Retrofit retrofit;
+    private CurrentSupportEnvironment currentSupportEnvironment = CurrentSupportEnvironmentFactory.getCurrentSupportEnvironment();
+
     public LoginCallImpl() {
         OkHttpClient.Builder okHttpClient = new OkHttpClient().newBuilder();
         CookieManager cookieManager = new CookieManager();
@@ -33,25 +37,28 @@ public class LoginCallImpl implements LoginCall {
                 Request original = chain.request();
                 Request request = original.newBuilder()
                         .header("content-type", "application/x-www-form-urlencoded")
-                        .header("Accept","*/*")//.method("POST",body)
+                        .header("Accept", "*/*")//.method("POST",body)
                         .method(original.method(), original.body())
                         .build();
                 return chain.proceed(request);
             }
         });
         Gson gson = new GsonBuilder().setLenient().create();
-        retrofit = new Retrofit.Builder().baseUrl("http://192.168.254.144:1881")
+        retrofit = new Retrofit.Builder().baseUrl(currentSupportEnvironment.getCurrentEnvironment().getUrlBase()/*"http://192.168.254.144:1881"*/)
                 .client(okHttpClient.build())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
 
+    public void init() {
+
+    }
+
     @Override
-    public Call<String> login( String username, String password) {
-
+    public Call<String> login(String username, String password) {
+        //init();
         LoginCall loginCall = retrofit.create(LoginCall.class);
-
-        return  loginCall.login(username,password);
+        return loginCall.login(username, password);
     }
 }
