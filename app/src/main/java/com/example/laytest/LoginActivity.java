@@ -39,9 +39,10 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar loginProgressBar;
     private LoginService loginService;
     private static ExecutorService executorService = Executors.newSingleThreadExecutor();
-   // private SupportEnvironmentContainerImpl supportEnvironmentContainer = SupportEnvironmentContainerFactory.getSupportEnvironmentContainer()  ;
+    // private SupportEnvironmentContainerImpl supportEnvironmentContainer = SupportEnvironmentContainerFactory.getSupportEnvironmentContainer()  ;
 
     private SupportEnvironmetManager supportEnvironmetManager = SupportEnvironmetManagerFactory.getSupportEnvironmetManager();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-        btnLogin.setOnClickListener(loginOnClickListener);
+        btnLogin.setOnClickListener(view -> tryDoLogin());
         mTextMessage = findViewById(R.id.message);
     }
 
@@ -102,7 +103,8 @@ public class LoginActivity extends AppCompatActivity {
         ;
         System.out.println("onRestart: " + new Date());
     }
-    private void loadSupportExpressEnvironments(){
+
+    private void loadSupportExpressEnvironments() {
         supportEnvironmetManager.initialize("app.properties", getApplicationContext());
 
 
@@ -110,22 +112,13 @@ public class LoginActivity extends AppCompatActivity {
         //supportEnvironmentContainer.se
 
     }
-    private View.OnClickListener loginOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            tryDoLogin();
-        }
-    };
 
     private void tryDoLogin() {
         btnLogin.setEnabled(false);
         loginProgressBar.setVisibility(View.VISIBLE);
-        Runnable runnableLogin = new Runnable() {
-            @Override
-            public void run() {
-                boolean loginSucceededFull = login();
-                if (loginSucceededFull) startTicketCreationActivity();
-            }
+        Runnable runnableLogin =()->{
+            boolean loginSucceededFull = login();
+            if (loginSucceededFull) startTicketCreationActivity();
         };
         executorService.submit(runnableLogin);
     }
